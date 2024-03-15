@@ -1,0 +1,220 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <ctype.h>
+#define MAX_LUNA 12
+#define MAX_ANUL 2025
+
+struct Cartof
+{
+    char date[12];
+    unsigned long long int id;
+    char *product_name;
+    char *product_category;
+    char *product_subcategory;
+    float unit_price;
+    const unsigned int quantity_sold;
+    char *sale_country;
+    char *sale_city;
+    struct Cartof *next;
+};
+typedef struct Cartof Unit;
+
+// typedef struct an_luna{
+//     char stocare[10];
+// }Grupare;
+
+int anul_luna[MAX_ANUL + 5][MAX_LUNA + 5];
+
+
+
+
+
+Unit *head = NULL;
+
+
+void Read_file()
+{
+
+    FILE *file = fopen("C:\\Users\\chicu\\OneDrive\\Desktop\\SDAAfacere.txt", "r");
+
+    if (file == NULL)
+    {
+        printf("Nu sa putut deschide fisierul\n");
+        exit(-1);
+    }
+
+
+    
+    while (!feof(file))
+    {
+        
+    Unit an_lu_zi[12];
+        char temp_product_name[100];
+        char temp_product_category[100];
+        char temp_product_subcategory[100];
+        char temp_sale_country[100];
+        char temp_sale_city[100];
+        char temp_date[11];
+
+        Unit *temp = (Unit *)malloc(sizeof(Unit));
+        
+        fscanf(file, "%[^,],%llu,%[^,],%[^,],%[^,],%f,%u,%[^,],%[^\n]",
+               temp_date,
+               &temp->id,
+               temp_product_name,
+               temp_product_category,
+               temp_product_subcategory,
+               &temp->unit_price,
+               &temp->quantity_sold,
+               temp_sale_country,
+               temp_sale_city);
+
+        int year,month;
+               if (sscanf(temp_date, "%d-%d",&year,&month) == 2){
+        //anul_luna[year][month] = 1;
+
+    }
+    printf("%d %d",year,month);
+    // fflush(file);
+    // printf("%s ",temp_date);
+        // char temp_year[5];
+        // char temp_month[3];
+        // strncpy(temp_year,temp_date,4);
+        // temp_year[4] = '\0';
+        // strncpy(temp_month,temp_date + 5,2);
+        // temp_month[2] = '\0';
+
+        // int  year = atoi(temp_year);
+        // int  month = atoi(temp_month);
+    
+
+        // printf("an = %d luna = %d\n",year,month); 
+    
+    
+        strcpy(temp->date,temp_date);
+        temp->product_name = strdup(temp_product_name);
+        temp->product_category = strdup(temp_product_category);
+        temp->product_subcategory = strdup(temp_product_subcategory);
+        temp->sale_country = strdup(temp_sale_country);
+        temp->sale_city = strdup(temp_sale_city);
+        temp->next = NULL;
+        printf("\nSalut\n");
+
+        if (head == NULL)
+        {
+            head = temp;
+        }
+        else
+        {
+            Unit *temp1 = head;
+            while (temp1->next != NULL)
+            {
+                temp1 = temp1->next;
+            }
+
+            temp1->next = temp;
+        }
+    }
+
+
+    int i,j;
+    printf("1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\n");
+    for(i = 1970; i < MAX_ANUL; i++){
+        for(j = 1; j <MAX_LUNA; j++){
+            if(anul_luna[i][j] != 0){
+            printf("anul %d  ",i);
+            printf("%d ",anul_luna[i][j]);
+            }
+        if(anul_luna[i][j] != 0){
+            printf("\n");
+        }
+        }
+    }
+
+
+
+    // rewind(file);
+    // Unit *temp_head = head;
+    // FILE * fp;
+    //     fp = fopen("C:\\Users\\chicu\\OneDrive\\Desktop\\printare.txt","w");
+    // while (temp_head != NULL)
+    // {
+    //     printf("%s %llu %s %s %s %lf %d %s %s",
+    //            temp_head->date,
+    //            temp_head->id,
+    //            temp_head->product_name,
+    //            temp_head->product_category,
+    //            temp_head->product_subcategory,
+    //            temp_head->unit_price,
+    //            temp_head->quantity_sold,
+    //            temp_head->sale_country,
+    //            temp_head->sale_city);
+
+    //     temp_head = temp_head->next;
+    // }
+    fclose(file);
+        printf("\nSalut\n");
+}
+
+void free_list(Unit *head)
+{
+    Unit *temp_head = head;
+    while (temp_head != NULL)
+    {
+        Unit *temp = temp_head;
+        temp_head = temp_head->next;
+        free(temp->product_name);
+        free(temp->product_category);
+        free(temp->product_subcategory);
+        free(temp->sale_country);
+        free(temp->sale_city);
+        free(temp);
+    }
+}
+
+int main()
+{
+    Read_file();
+
+
+    // Unit * temp = head;
+    // int i = 1970;
+    // int j = 0;
+//     while(i < MAX_ANUL)
+//    {
+//        i++;
+//        j++;
+//         printf("%s %llu %s %s %s %lf %d %s %s",
+//                temp->date,
+//                temp->id,
+//                temp->product_name,
+//                temp->product_category,
+//                temp->product_subcategory,
+//                temp->unit_price,
+//                temp->quantity_sold,
+//                temp->sale_country,
+//                temp->sale_city);
+
+//         temp = temp->next; 
+
+//     }
+    
+    
+    
+    // int i,j;
+    // for(i = 1970; i < MAX_ANUL; i++){
+    //     for(j = 1; j <= MAX_LUNA; j++){
+    //         if(anul_luna[i][j] != 0){
+    //         printf("anul  = %d luna = %d ",i,anul_luna[i][j]);
+    //         }
+    //     if(anul_luna[i][j] != 0){
+    //         printf("\n");
+    //     }
+    //     }
+    // }
+ 
+}
+
+
