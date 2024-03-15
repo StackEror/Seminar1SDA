@@ -1,7 +1,3 @@
-/*
-    Inca e in proces...
-*/
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -30,14 +26,17 @@ int anul_luna[MAX_ANUL][MAX_LUNA + 1];
 void Read_file();
 void free_list();
 void Show_menu();
-
+void show_profit_per_month_every_year();
 int main()
 {
     int choice;
+    do{
     Read_file();
     Show_menu();
-    scanf("%d",&choice);
-    printf("Program executed with code 0!\n");
+    // scanf("%d",&choice);
+    show_profit_per_month_every_year();
+    // printf("Program executed with code 0!\n");
+    }while(choice);
     return 0;
  
 }
@@ -46,7 +45,7 @@ int main()
 void Read_file()
 {
 
-    FILE *file = fopen("C:\\Users\\Lucian\\OneDrive\\Desktop\\printare.txt", "r");
+    FILE *file = fopen("C:\\Users\\chicu\\OneDrive\\Desktop\\printare.txt", "r");
 
     if (file == NULL)
     {
@@ -54,12 +53,9 @@ void Read_file()
         exit(-1);
     }
 
-
-    
     while (!feof(file))
     {
         
-    // Unit an_lu_zi[12];
         char temp_product_name[100];
         char temp_product_category[100];
         char temp_product_subcategory[100];
@@ -85,8 +81,6 @@ void Read_file()
         anul_luna[year][month] += temp->quantity_sold * temp->unit_price;
 
     }
-
-
 
         strcpy(temp->date,temp_date);
         temp->product_name = strdup(temp_product_name);
@@ -132,86 +126,20 @@ void free_list()
     }
 }
 
+void show_profit_per_month_every_year(){
+    int anul,luna;
 
+    printf("alege anul\n");
+    scanf("%d",&anul);
+    printf("alege luna\n");
+    scanf("%d",&luna);
+
+    int pret = anul_luna[anul][luna];
+
+    printf("Profitul in anul %d in luna %d a fost: %d\n",anul,luna,pret);
+}
 
 void Show_menu(){
     printf("\nAlegeti o optiune:\n");
     printf("1. Afisare fiecare profit per an per luna\n");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*char temp_year[5];
-char temp_month[3];
-strncpy(temp_year,temp_date,4);
-temp_year[4] = '\0';
-strncpy(temp_month,temp_date + 5,2);
-temp_month[2] = '\0';
-int  year = atoi(temp_year);
-int  month = atoi(temp_month);
-printf("an = %d luna = %d\n",year,month); */
-
-//                      PRINTARE VALOR DIN MATRICE
-/*int i,j;
-printf("luna\t    1\t    2\t    3\t    4\t    5\t    6\t    7\t    8\t    9\t    10\t    11\t    12\n");
-for(i = 1970; i < MAX_ANUL; i++){
-printf("anul %d|",i);
-for(j = 1; j <= MAX_LUNA; j++){
-if(anul_luna[i][j] != 0){
-printf("%-7d|",anul_luna[i][j]);
-}
-else{
-    printf("\t|");
-}
-}
-// printf("\n");
-//if(anul_luna[i][j] != 0){
-printf("\n");
-//}
-    }*/
-
-
-
-//          PRINTARE VALORI DIN LISTA
-/*Unit *temp_head = head;
-FILE * fp;
-fp = fopen("C:\\Users\\chicu\\OneDrive\\Desktop\\printare.txt","w");
-while (temp_head != NULL)
-{
-printf("%s %llu %s %s %s %lf %d %s %s",
-temp_head->date,
-temp_head->id,
-temp_head->product_name,
-temp_head->product_category,
-temp_head->product_subcategory,
-temp_head->unit_price,
-temp_head->quantity_sold,
-temp_head->sale_country,
-temp_head->sale_city);
-
-temp_head = temp_head->next;
-}*/
