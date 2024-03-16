@@ -9,7 +9,7 @@
 struct Cartof
 {
     char date[12];
-    unsigned long long int id;
+    int id;
     char *product_name;
     char *product_category;
     char *product_subcategory;
@@ -20,6 +20,12 @@ struct Cartof
     struct Cartof *next;
 };
 typedef struct Cartof Unit;
+
+typedef struct
+{
+    char str[100];
+} Most_selled;
+
 Unit *head = NULL;
 int anul_luna[MAX_ANUL][MAX_LUNA + 1];
 
@@ -27,25 +33,57 @@ void Read_file();
 void free_list();
 void Show_menu();
 void show_profit_per_month_every_year();
+void best_5_most_selled_products();
+void swap(int *a, int *b);
+void distributed_sales_by_category();
+void cities_with_most_sales();
+void the_monthly_tendencies_for_each_subcategory();
 int main()
 {
     int choice;
-    do{
     Read_file();
-    Show_menu();
-    // scanf("%d",&choice);
-    show_profit_per_month_every_year();
-    // printf("Program executed with code 0!\n");
-    }while(choice);
-    return 0;
- 
-}
+    while (1)
+    {
+        Show_menu();
+        scanf("%d", &choice);
+        getchar();
+        switch (choice)
+        {
+        case 1:
+            show_profit_per_month_every_year();
+            break;
 
+        case 2:
+            best_5_most_selled_products();
+            break;
+
+        case 3:
+            distributed_sales_by_category();
+            break;
+
+        case 4:
+            cities_with_most_sales();
+            break;
+
+        case 5:
+            the_monthly_tendencies_for_each_subcategory();
+            break;
+
+        case 0:
+            exit(0);
+            break;
+
+        default:
+            printf("Optiune invalida! Introduceti din nou.\n");
+        }
+    }
+    return 0;
+}
 
 void Read_file()
 {
 
-    FILE *file = fopen("C:\\Users\\chicu\\OneDrive\\Desktop\\printare.txt", "r");
+    FILE *file = fopen("C:\\Users\\chicu\\OneDrive\\Desktop\\fisier.txt", "r");
 
     if (file == NULL)
     {
@@ -55,7 +93,7 @@ void Read_file()
 
     while (!feof(file))
     {
-        
+
         char temp_product_name[100];
         char temp_product_category[100];
         char temp_product_subcategory[100];
@@ -64,8 +102,8 @@ void Read_file()
         char temp_date[12];
 
         Unit *temp = (Unit *)malloc(sizeof(Unit));
-        
-        fscanf(file, "%[^,],%llu,%[^,],%[^,],%[^,],%lf,%d,%[^,],%[^\n]",
+
+        fscanf(file, "%[^,],%d,%[^,],%[^,],%[^,],%lf,%d,%[^,],%[^\n]",
                temp_date,
                &temp->id,
                temp_product_name,
@@ -76,13 +114,13 @@ void Read_file()
                temp_sale_country,
                temp_sale_city);
 
-        int year,month;
-               if (sscanf(temp_date, "%d-%d",&year,&month) == 2){
-        anul_luna[year][month] += temp->quantity_sold * temp->unit_price;
+        int year, month;
+        if (sscanf(temp_date, "%d-%d", &year, &month) == 2)
+        {
+            anul_luna[year][month] += temp->quantity_sold * temp->unit_price;
+        }
 
-    }
-
-        strcpy(temp->date,temp_date);
+        strcpy(temp->date, temp_date);
         temp->product_name = strdup(temp_product_name);
         temp->product_category = strdup(temp_product_category);
         temp->product_subcategory = strdup(temp_product_subcategory);
@@ -107,7 +145,6 @@ void Read_file()
     }
 
     fclose(file);
-        // printf("\nSalut\n");
 }
 
 void free_list()
@@ -126,20 +163,165 @@ void free_list()
     }
 }
 
-void show_profit_per_month_every_year(){
-    int anul,luna;
+void show_profit_per_month_every_year()
+{
+    int anul, luna;
 
     printf("alege anul\n");
-    scanf("%d",&anul);
+    scanf("%d", &anul);
     printf("alege luna\n");
-    scanf("%d",&luna);
+    scanf("%d", &luna);
 
     int pret = anul_luna[anul][luna];
 
-    printf("Profitul in anul %d in luna %d a fost: %d\n",anul,luna,pret);
+    printf("Profitul in anul %d in luna %d a fost: %d\n", anul, luna, pret);
 }
 
-void Show_menu(){
+void Show_menu()
+{
     printf("\nAlegeti o optiune:\n");
     printf("1. Afisare fiecare profit per an per luna\n");
+    printf("2. Afisare top 5 cele mai vandute produse\n");
+    printf("3. Cum se distribuie vanzarile pe categoriile de produse?\n");
+    printf("4. Care sunt orasele cu cele mai mari vanzari pentru fiecare tara?\n");
+    printf("5. Ce tendinte se observa in vanzarile lunare pentru diferite subcategorii de produse\n");
+}
+
+void best_5_most_selled_products()
+{
+    Unit *temp_head = head;
+    int pastrare[1000];
+    char stoc[1000][30];
+    int i = 0;
+
+    while (temp_head != NULL)
+    {
+        pastrare[i] = temp_head->quantity_sold * temp_head->unit_price;
+        strcpy(stoc[i], temp_head->product_name);
+        i++;
+        temp_head = temp_head->next;
+    }
+    printf("Salut\n");
+
+    int j = 0;
+
+    for (int t = 0; t < i; t++)
+    {
+        for (j = 0; j < i - t - 1; j++)
+        {
+            if (pastrare[j] > pastrare[j + 1])
+            {
+                swap(&pastrare[j], &pastrare[j + 1]);
+            }
+        }
+    }
+    // printf("i =  %d Sortate\n",i);
+    // for(int t = 0; t < i; t++)
+    // {
+    //     printf("stoc[i]= %s\t %d\n",stoc[t],pastrare[t]);
+    // }
+
+    for (int h = 0; h < 5; h++)
+    {
+        strcpy(stoc[h], stoc[--i]);
+    }
+    printf("Top 5 cele mai vandute produse\n");
+    for (int t = 0; t < 5; t++)
+    {
+        printf("%d. %s\n", t + 1, stoc[t]);
+    }
+}
+
+void swap(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void distributed_sales_by_category()
+{
+    Unit *temp_head = head;
+
+    int i = 0;
+
+    while (temp_head != NULL)
+    {
+        printf("%s\n", temp_head->product_subcategory);
+        i++;
+
+        temp_head = temp_head->next;
+    }
+    printf("Salut\n");
+}
+
+void cities_with_most_sales()
+{
+    Unit *temp_head = head;
+    int cantitate[1000];
+    char stoc[1000][30];
+    int i = 0;
+    int index[1000];
+
+    while (temp_head != NULL)
+    {
+        cantitate[i] = temp_head->quantity_sold;
+        strcpy(stoc[i], temp_head->sale_city);
+        i++;
+        temp_head = temp_head->next;
+    }
+    printf("Salut\n");
+
+    int j = 0;
+
+    for (int t = 0; t < i; t++)
+    {
+        for (j = 0; j < i - t - 1; j++)
+        {
+            index[j] = j;
+            index[j + 1] = j + 1;
+            if (cantitate[j] > cantitate[j + 1])
+            {
+
+                swap(&cantitate[j], &cantitate[j + 1]);
+                swap(&index[j], &index[j + 1]);
+            }
+        }
+    }
+    for (int h = 0; h < 5; h++)
+    {
+        strcpy(stoc[h], stoc[index[i--]]);
+    }
+    printf("i =  %d Sortate\n", i);
+    for (int t = 0; t < i; t++)
+    {
+        printf("stoc[i]= %s\t\n", stoc[t]);
+    }
+
+    printf("Oraselel cu cele mai multe vanzari\n");
+    for (int t = 0; t < 5; t++)
+    {
+        printf("%d. %s\n", t + 1, stoc[t]);
+    }
+}
+void the_monthly_tendencies_for_each_subcategory()
+{
+    int i, j;
+    printf("luna\t    1\t    2\t    3\t    4\t    5\t    6\t    7\t    8\t    9\t    10\t    11\t    12\n");
+    for (i = 1970; i < MAX_ANUL; i++)
+    {
+        printf("anul %d|", i);
+        for (j = 1; j <= MAX_LUNA; j++)
+        {
+            if (anul_luna[i][j] != 0)
+            {
+                printf("%-7d|", anul_luna[i][j]);
+            }
+            else
+            {
+                printf("\t |");
+            }
+        }
+        printf("\n");
+    }
 }
